@@ -73,3 +73,51 @@
     <p class="copy-success" id="copySuccess">✅ API Key berhasil disalin!</p>
   </div>
 
+    <script>
+    async function buatApiKey() {
+      const textarea = document.getElementById('apikey');
+      const button = document.getElementById('btnBuat');
+      const copyButton = document.getElementById('btnCopy');
+      const copySuccess = document.getElementById('copySuccess');
+      
+      button.disabled = true;
+      button.textContent = "Memproses...";
+      textarea.value = "";
+      copyButton.style.display = "none";
+      copySuccess.style.display = "none";
+
+      try {
+        const response = await fetch('/create', { method: 'POST' });
+        const data = await response.json();
+
+        if (data.apiKey) {
+          textarea.value = data.apiKey;
+          copyButton.style.display = "block";
+        } else {
+          textarea.value = "Gagal membuat API Key.";
+        }
+      } catch (err) {
+        textarea.value = "Terjadi kesalahan: " + err.message;
+      } finally {
+        button.disabled = false;
+        button.textContent = "Create API Key";
+      }
+    }
+
+    function copyApiKey() {
+      const textarea = document.getElementById('apikey');
+      const copyButton = document.getElementById('btnCopy');
+      const copySuccess = document.getElementById('copySuccess');
+
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        copyButton.textContent = "✔ Copied";
+        copySuccess.style.display = "block";
+
+        setTimeout(() => {
+          copyButton.textContent = "📋 Copy";
+          copySuccess.style.display = "none";
+        }, 2000);
+      });
+    }
+  </script>
+
